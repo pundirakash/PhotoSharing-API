@@ -1,51 +1,64 @@
-
-let dummyPosts=[
-    {id:1,caption:"My first photo!"},
-    {id:2,caption:"Another Cool pic"}
-]
+const Post=require('../models/postModel');
 
 //Get all post
-const getPosts=(req,res)=>{
-    res.json(dummyPosts);
+const getPosts=async (req,res,next)=>{
+    try{
+        const posts=await Post.find();
+        res.json(posts);
+    }catch(err){
+        next(err);
+    }
 }
 
 //Get only a single post
 
-const getPostById=(req,res)=>{
-    const id=req.params.id;
-    const post=dummyPosts.find(p=>p.id === Number(req.params.id));
-    if(!post){
-        return res.json(404).json({message:"page not found"})
-    }
-    res.json(post);
+const getPostById=async (req,res,next)=>{
+    try{
+        const post=await Post.findById(req.params.id);
+        if(!post){
+            res.status(404);
+            throw new Error("Post not available in db");
+        }
+        res.json(post);
+    }catch(err){
+        next(err);
+    }  
 }
 
 //Create a post
 
-const createPost=(req,res)=>{
-    const newPost={
-        id:dummyPosts.length+1,
-        caption:req.body.caption
+const createPost=async (req,res,next)=>{
+    try{
+        const newPost=await Post.create({
+            caption:req.body.caption
+        });
+        res.status(201).json(newPost);
+    }catch(err){
+        next(err);
     }
-
-    dummyPosts.push(newPost);
-    res.status(201).json(newPost);
 }
 
 //Update aPost
-const updatePost=(req,res)=>{
-    const postIndex=dummyPosts.findIndex(p=>p.id===Number(req.params.id));
-
-    dummyPosts[postIndex].caption=req.body.caption;
-    res.json(dummyPosts[postIndex]);
+const updatePost=async (req,res,next)=>{
+    try{
+        const updatedPost=await Post.findByIdAndUpdate(req.params.id,req.body,{
+            new:true
+        })
+        res.json(updatedPost);
+    }catch(err){
+        next(err);
+    }
 }
 
 //Delete a post
 
-const deletePost=(req,res)=>{
-    const postIndex=dummyPosts.findIndex(p=>p.id===Number(req.params.id));
-    dummyPosts.splice(postIndex,1);
-    res.json({message:"Post deleted Successfully"});
+const deletePost=async (req,res,next)=>{
+    try{
+        const deletedPost=await Post.findByIdAndDelete(req.params.id);
+        res.json({message:"Post deleted"});
+    }catch(err){
+        next(err);
+    }
 }
 
 
