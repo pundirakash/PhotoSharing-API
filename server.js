@@ -1,6 +1,7 @@
 const express=require('express');
 require('dotenv').config();
 const postRoutes=require("./src/routes/postRoutes")
+const userRoutes=require("./src/routes/userRoutes")
 const logger=require("./src/middlewares/logger")
 const errorHandler=require("./src/middlewares/errorHandler");
 const connectDB=require('./src/config/db');
@@ -15,6 +16,7 @@ app.use(express.json());
 app.use(logger);
 
 app.use("/api/posts",postRoutes);
+app.use("/api/users",userRoutes);
 
 app.use(errorHandler);
 
