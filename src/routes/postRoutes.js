@@ -1,5 +1,6 @@
 const express=require('express');
 const {auth}=require('../middlewares/authMiddleware');
+const upload=require('../config/uploadConfig');
 const router=express.Router();
 
 const {
@@ -13,7 +14,7 @@ const {
 //routes which are without ID param
 router.route("/")
     .get(getPosts)
-    .post(auth,createPost);
+    .post(auth,upload.single('image'),createPost);
 
 //routes with are having id param
 

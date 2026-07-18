@@ -29,10 +29,19 @@ const getPostById=async (req,res,next)=>{
 
 const createPost=async (req,res,next)=>{
     try{
+        if(!req.file){
+            res.status(400);
+            throw new Error("Please upload an image");
+        }
+        const url=req.file.path;
+
         const newPost=await Post.create({
-            caption:req.body.caption
+            caption:req.body.caption,
+            imageUrl:url
         });
+
         res.status(201).json(newPost);
+
     }catch(err){
         next(err);
     }

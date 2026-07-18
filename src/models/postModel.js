@@ -1,5 +1,5 @@
 const mongoose=require('mongoose');
-
+const upload=require('../config/uploadConfig');
 const postSchema= new mongoose.Schema({
     caption:{
         type:String,
