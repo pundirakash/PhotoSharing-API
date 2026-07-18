@@ -37,7 +37,7 @@ const createPost=async (req,res,next)=>{
 
         const newPost=await Post.create({
             caption:req.body.caption,
-            imageUrl:url
+            imageURL:url
         });
 
         res.status(201).json(newPost);
@@ -47,13 +47,24 @@ const createPost=async (req,res,next)=>{
     }
 }
 
-//Update aPost
+//Update a Post
 const updatePost=async (req,res,next)=>{
     try{
-        const updatedPost=await Post.findByIdAndUpdate(req.params.id,req.body,{
+        let post=await Post.findById(req.params.id);
+        if(!post){
+            res.status(404);
+            throw new Error("Post not found");
+        }
+        const updateData={caption:req.body.caption}
+        if(req.file){
+            updateData.imageURL=req.file.path;
+        }
+        const updatedPost=await Post.findByIdAndUpdate(req.params.id,updateData,{
             new:true
-        })
+        });
+
         res.json(updatedPost);
+
     }catch(err){
         next(err);
     }

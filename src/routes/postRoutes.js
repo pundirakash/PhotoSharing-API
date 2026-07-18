@@ -20,7 +20,7 @@ router.route("/")
 
 router.route("/:id")
     .get(getPostById)
-    .put(auth,updatePost)
+    .put(auth,upload.single('image'),updatePost)
     .patch(auth,updatePost)
     .delete(auth,deletePost);
 
