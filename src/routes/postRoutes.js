@@ -1,4 +1,5 @@
 const express=require('express');
+const {auth}=require('../middlewares/authMiddleware');
 const router=express.Router();
 
 const {
@@ -12,15 +13,15 @@ const {
 //routes which are without ID param
 router.route("/")
     .get(getPosts)
-    .post(createPost);
+    .post(auth,createPost);
 
 //routes with are having id param
 
 router.route("/:id")
     .get(getPostById)
-    .put(updatePost)
-    .patch(updatePost)
-    .delete(deletePost);
+    .put(auth,updatePost)
+    .patch(auth,updatePost)
+    .delete(auth,deletePost);
 
 module.exports=router;
 

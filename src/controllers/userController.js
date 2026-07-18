@@ -1,5 +1,5 @@
 const User=require('../models/userModel');
-
+const generateToken=require('../utils/generatetoken');
 
 //Register
 
@@ -46,6 +46,7 @@ const loginUser=async (req,res,next)=>{
                 _id:user.id,
                 username:user.username,
                 email:user.email,
+                token:generateToken(user._id),
                 message:"Login successfully"
             });
         }else{
