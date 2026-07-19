@@ -1,5 +1,5 @@
 const Post=require('../models/postModel');
-
+const cloudinary=require('cloudinary').v2
 //Get all post
 const getPosts=async (req,res,next)=>{
     try{
@@ -58,6 +58,16 @@ const updatePost=async (req,res,next)=>{
         const updateData={caption:req.body.caption}
         if(req.file){
             updateData.imageURL=req.file.path;
+            if(post.imageURL){
+                //https://res.cloudinary.com/kyh4ecmd/image/upload/v1784383358/PhotoSharing_API/xuff9rk68eee8txrowkv.png
+                //["PhotoSharing_API","xufff.....jpg"]
+                //PhotoSharing_API/xufff.....jpg
+                //PhotoSharing_API/xuff9rk68eee8txrowkv
+                //["PhotoSharing_API/xuff9rk68eee8txrowkv","jpg"]
+                const publicID=post.imageURL.split('/').slice(-2).join("/").split(".")[0];
+                await cloudinary.uploader.destroy(publicID)
+
+            }
         }
         const updatedPost=await Post.findByIdAndUpdate(req.params.id,updateData,{
             new:true
@@ -74,8 +84,14 @@ const updatePost=async (req,res,next)=>{
 
 const deletePost=async (req,res,next)=>{
     try{
-        const deletedPost=await Post.findByIdAndDelete(req.params.id);
-        res.json({message:"Post deleted"});
+        const post=await Post.findById(req.params.id);
+        if(post.imageURL){
+            const publicID=post.imageURL.split('/').slice(-2).join("/").split(".")[0];
+            await cloudinary.uploader.destroy(publicID)
+        }
+
+        await post.deleteOne();
+        res.json({message:"Post and image deleted successfully"})
     }catch(err){
         next(err);
     }
